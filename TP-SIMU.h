@@ -10,13 +10,18 @@
 #include <stdbool.h>
 #include <unistd.h>
 
+//Constante
 #define HV LONG_MAX   // Definimos HV como el valor máximo de unsigned int
-#define SECRETARIO 0
-#define MEDICO 1
+#define MEDICO 0
+#define SECRETARIO 1
 #define PRIORIDAD 2
+#define LLEGADA 3
 
+//Colores para Debug
 #define NEGRO  "\x1B[0m"
 #define ROJO  "\x1B[31m"
+#define VERDE  "\x1B[32m"
+#define AMARILLO  "\x1B[33m"
 
 long  tf, t;
 
@@ -27,9 +32,9 @@ long     TPLL,          // Tiempo proxima llegada
         *TPSSP;         // Tiempo proxima salida secretario prioridad
 
 // Datos
-long 	IA(),		// Intervalo entre arribos
-        TAM(),		// Tiempo de atención del medico
-        TAS();		// Tiempo de atención del secretario
+long    IA(),           // Intervalo entre arribos
+        TAM(),          // Tiempo de atención del medico
+        TAS();          // Tiempo de atención del secretario
 
 // Var. Control
 int     M,              // Cantidad de médicos
@@ -39,33 +44,33 @@ int     M,              // Cantidad de médicos
 int     NSS,            // Cantidad de personas para el secretario
         NSM,            // Cantidad de personas para el Médico
         NSP,            // Cantidad de personas para el secretario con prioridad
-        *ITOM,          //
-        *ITOS,          //
-        STAM,          //
-        *STOM,          //
-        STAS,          //
-        *STOS,          //
-        SS,             //
-        SSM,            //
-        SSS,            //
-        SLLM,           //
-        SLLS,           //
-        NTM,            //
-        NTS,            //
+        *ITOM,          // Inicio tiempo ocioso médico
+        *ITOS,          // Inicio tiempo ocioso secretario
+        STAM,           // Sumatoria tiempo de atencion médico
+        *STOM,          // Sumatoria tiempo ocioso médico
+        STAS,           // Sumatoria tiempo de atencion secretario
+        *STOS,          // Sumatoria tiempo ocioso secretario
+        SS,             // Sumatoria salida
+        SSM,            // Sumatoria salida médico
+        SSS,            // Sumatoria salida secretario
+        SLLM,           // Sumatoria llegada médico
+        SLLS,           // Sumatoria llegada secretario
+        NTM,            // Total de personas atendidas por médicos
+        NTS,            // Total de personas atendidas por secretarios
         SA5,
         TOTAL;
 
 // Var. Resultado
-double 	PECM,		// Promedio de Espera en Cola para el Médico
-        PECS,		// Promedio de Espera en Cola para el Secretario
-	*PTOS,		// Porcentaje de tiempo ocioso secretario
-	*PTOM,		// Porcentaje de tiempo ocioso médico
-	PPS,		// Promedio de Permanencia en el sistema
-	PA5;		// Porcentaje de arrepentidos 5
+double  PECM,           // Promedio de Espera en Cola para el Médico
+        PECS,           // Promedio de Espera en Cola para el Secretario
+        *PTOS,          // Porcentaje de tiempo ocioso secretario
+        *PTOM,          // Porcentaje de tiempo ocioso médico
+        PPS,            // Promedio de Permanencia en el sistema
+        PA5;            // Porcentaje de arrepentidos 5
 
 int k;                  // Indice actual
 
-void condicionesIniciales();    
+void condicionesIniciales();
 void calcularResultados();
 void mostrarResultados();
 void llegada();
@@ -75,6 +80,7 @@ void salidaSecretario();
 int secretarioLibre();
 int medicoLibre();
 int proxima_salida();
+int prioritariosAtendidos();
 
 double r();  // Random 0 < r() < 1
 
