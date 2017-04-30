@@ -10,14 +10,18 @@
 #include <stdbool.h>
 #include <unistd.h>
 
-#define HV 1000   // Definimos HV como el valor máximo de unsigned int
+#define HV LONG_MAX   // Definimos HV como el valor máximo de unsigned int
 #define SECRETARIO 0
 #define MEDICO 1
+#define PRIORIDAD 2
+
+#define NEGRO  "\x1B[0m"
+#define ROJO  "\x1B[31m"
 
 long  tf, t;
 
 //Eventos futuros
-long     TPLL,           // Tiempo proxima llegada
+long     TPLL,          // Tiempo proxima llegada
         *TPSM,          // Tiempo proxima salida medico
         *TPSS,          // Tiempo proxima salida secretario
         *TPSSP;         // Tiempo proxima salida secretario prioridad
@@ -37,9 +41,9 @@ int     NSS,            // Cantidad de personas para el secretario
         NSP,            // Cantidad de personas para el secretario con prioridad
         *ITOM,          //
         *ITOS,          //
-        *STAM,          //
+        STAM,          //
         *STOM,          //
-        *STAS,          //
+        STAS,          //
         *STOS,          //
         SS,             //
         SSM,            //
@@ -51,9 +55,6 @@ int     NSS,            // Cantidad de personas para el secretario
         SA5,
         TOTAL;
 
-
-
-
 // Var. Resultado
 double 	PECM,		// Promedio de Espera en Cola para el Médico
         PECS,		// Promedio de Espera en Cola para el Secretario
@@ -61,6 +62,8 @@ double 	PECM,		// Promedio de Espera en Cola para el Médico
 	*PTOM,		// Porcentaje de tiempo ocioso médico
 	PPS,		// Promedio de Permanencia en el sistema
 	PA5;		// Porcentaje de arrepentidos 5
+
+int k;                  // Indice actual
 
 void condicionesIniciales();    
 void calcularResultados();
@@ -71,7 +74,7 @@ bool arrepentimiento();
 void salidaSecretario();
 int secretarioLibre();
 int medicoLibre();
-int proxima_salida(int* k);
+int proxima_salida();
 
 double r();  // Random 0 < r() < 1
 

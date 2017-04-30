@@ -1,64 +1,72 @@
 #include "TP-SIMU.h"
 
 int main(int argc, char** argv) {
+    printf("INICIANDO\n");
     condicionesIniciales();
     // MODELO
     do {
-        int* p;
-        int PS = proxima_salida(p);
-        int k = *p;
-        printf("\tProxima salida K=%d\n", k);
+        // ERROR ACTUAL NSP O NSS LLEGA A VALER < 0
+        if (NSP<0 || NSS<0)
+            return 1;
+        
+        int PS = proxima_salida();
+
+        printf("TPSM[0]=%ld,TPSS[0]=%ld,TPSSP[0]=%ld\n", TPSM[0], TPSS[0], TPSSP[0]);
+        printf("TPSM[1]=%ld,TPSS[1]=%ld,TPSSP[1]=%ld\n", TPSM[1], TPSS[1], TPSSP[1]);
         if (PS == MEDICO) {
-            if (TPSM[k] < TPLL) {
-                printf("Salida medico\n");
+            if (TPSM[k] <= TPLL) {
+                printf("SALIDA MEDICO\n");
                 t = TPSM[k];
                 NSM--;
                 if (NSM < M) {
                     ITOM[k] = t;
                     TPSM[k] = HV;
                 } else {
-                    double tam = TAM();
+                    long tam = TAM();
                     TPSM[k] = t + tam;
-                    STAM[k] += tam;
+                    STAM += tam;
                 }
-                SSM = SS + t;
+                SSM = SSM + t;
                 NTM++;
                 if (r() < 0.3) {
-                    printf("Se mete en la cola de prioridad\n");
+                    printf("PASE A PRIORIDAD\n");
                     NSP++;
                     if (NSP + NSS <= N) {
                         int l = secretarioLibre();
                         STOS[l] += t - ITOS[l];
                         int tas = TAS();
                         TPSSP[l] = t + tas;
-                        STAS[l] += tas;
+                        STAS += tas;
                     }
                 }
             } else
                 llegada();
         } else
             if (PS == SECRETARIO) {
-            if (TPSS[k] < TPLL) {
-                printf("Salida secretarios\n");
+            if (TPSS[k] <= TPLL) {
+                printf("SALIDA SECRETARIO\n");
                 t = TPSS[k];
                 NSS--;
                 salidaSecretario(k);
             } else
                 llegada();
         } else {
-            if (TPSSP[k] < TPLL) {
-                printf("Salida secretarios prioritario\n");
+            if (TPSSP[k] <= TPLL) {
+                printf("SALIDA SECRETARIO PRIORITARIO\n");
                 t = TPSSP[k];
                 NSP--;
                 salidaSecretario(k);
-            } else
+            } else {
                 llegada();
+            }
         }
 
-        if (t > tf)
+        if (t > tf) {
             TPLL = HV;
-        printf("Fin ciclo con t=%ld\n y NS=%d", t,NSM + NSS + NSP);
-        //usleep(10000);
+        }
+
+        printf("Fin ciclo con t=%ld, [NSM=%d, NSS=%d, NSP=%d]\n", t, NSM, NSS, NSP);
+        usleep(100);
     } while ((t < tf) || (NSM + NSS + NSP > 0));
     calcularResultados();
     mostrarResultados();
@@ -80,18 +88,19 @@ void calcularResultados() {
     else
         PA5 = 0;
     if (NTM != 0)
-        PECM = (SSM - SLLM - STAM[i]) / NTM;
+        PECM = (SSM - SLLM - STAM) / NTM;
     else
         PECM = 0;
+
     if (NTS != 0)
-        PECS = (SSS - SLLS - STAS[i]) / NTS;
+        PECS = (SSS - SLLS - STAS) / NTS;
     else
         PECS = 0;
 }
 
 void mostrarResultados() {
     int i;
-    printf("Resultados\n");
+    printf("%sRESULTADOS%s\n", ROJO, NEGRO);
 
     printf("PTOS:\n");
     for (i = 0; i < N; i++) {
@@ -106,26 +115,24 @@ void mostrarResultados() {
 }
 
 void llegada() {
-    printf("llegada TPLL=%ld\n", TPLL);
     int k;
     t = TPLL;
     TPLL = t + IA();
     switch (motivoConsulta()) {
         case MEDICO:
-            printf("Motivo medico\n");
+            printf("LLEGADA MOTIVO MEDICO\n");
             k = medicoLibre();
             NSM++;
             SLLM += t;
             if (NSM <= M) {
                 STOM[k] += t - ITOM[k];
-                double tam = TAM();
+                long tam = TAM();
                 TPSM[k] = t + tam;
-                STAM[k] += tam;
-                printf("Sale a las %ld\n", TPSM[k]);
+                STAM += tam;
             }
             break;
         case SECRETARIO:
-            printf("Motivo secretario\n");
+            printf("LLEGADA MOTIVO SECRETARIO\n");
             k = secretarioLibre();
             int a = arrepentimiento();
             if (!a) {
@@ -133,10 +140,9 @@ void llegada() {
                 SLLS += t;
                 if (NSS + NSP <= N) {
                     STOS[k] += t - ITOS[k];
-                    double tas = TAS();
+                    long tas = TAS();
                     TPSS[k] = t + tas;
-                    printf("Sale a las %ld\n", TPSS[k]);
-                    STAS[k] = STAS[k] + tas;
+                    STAS += tas;
                 }
             }
             break;
@@ -147,11 +153,11 @@ void condicionesIniciales() {
     printf("Condiciones Iniciales\n");
     // Condiciones iniciales
     t = 0;
-    tf = 100;
+    tf = 10000;
 
     // Var. Control
-    M = 3;
-    N = 3;
+    M = 2;
+    N = 2;
 
     // Var. Estado
     ITOM = calloc(M, sizeof (int));
@@ -159,12 +165,10 @@ void condicionesIniciales() {
 
     ITOM = malloc(sizeof (int)*M);
     ITOS = malloc(sizeof (int)*N);
-    STAM = malloc(sizeof (int)*M);
     STOM = malloc(sizeof (int)*M);
-    STAS = malloc(sizeof (int)*N);
     STOS = malloc(sizeof (int)*N);
 
-    NSS = NSM = SS = SSM = SSS = SLLM = SLLS = NTM = NTS = 0;
+    NSS = NSM = SS = SSM = SSS = SLLM = SLLS = NTM = NTS = STAS = STAM = 0;
 
     // Var. Resultado
     PECM = PECS = PPS = PA5 = 0;
@@ -174,7 +178,7 @@ void condicionesIniciales() {
 
     //Eventos futuros
     TPLL = 0;
-    TPSM = malloc(sizeof (long)*M);
+    TPSM = malloc(sizeof (long)*M); //malloc(sizeof (long)*M);
     TPSS = calloc(N, sizeof (long));
     TPSSP = malloc(sizeof (long)*N);
     int i;
@@ -204,23 +208,25 @@ int motivoConsulta() {
 }
 
 void salidaSecretario(int k) {
-    printf("salida secretario\n");
     if (NSP + NSS < N) {
         ITOS[k] = t;
         TPSS[k] = HV;
         TPSSP[k] = HV;
     } else {
-        double tas = TAS();
-        if (NSP > 0) { // HAY ALGUIEN CON PRIORIDAD
+        long tas = TAS();
+        printf("a=%d",prioritariosAtendidos());
+        if (prioritariosAtendidos()<NSP ) { // HAY ALGUIEN CON PRIORIDAD SIN ATENDER
             TPSSP[k] = t + tas;
             TPSS[k] = HV;
+            printf("ATENDIENDO UN PRIORITARIO QUE ESTABA EN COLA");
         } else {
             TPSS[k] = t + tas;
             TPSSP[k] = HV;
         }
-        STAS[k] += tas;
-        SSS += t;
+        STAS += tas;
     }
+
+    SSS += t;
     NTS++;
 }
 
@@ -242,26 +248,26 @@ int medicoLibre() {
     }
 }
 
-int proxima_salida(int* k) {
+int proxima_salida() {
     int i;
     long menorTiempo = HV;
-    int proximaSalida = SECRETARIO;
+    int proximaSalida;
     for (i = 0; i < N; i++) {
-        if (TPSS[i] <= TPSSP[i])
-            if (TPSS[i] < menorTiempo) {
-                menorTiempo = TPSS[i];
-                *k = i;
-            } else
-                if (TPSSP[i] < menorTiempo) {
-                menorTiempo = TPSSP[i];
-                *k = i;
-            }
-
+        if (TPSS[i] < menorTiempo) {
+            menorTiempo = TPSS[i];
+            k = i;
+            proximaSalida = SECRETARIO;
+        } 
+            if (TPSSP[i] < menorTiempo) {
+            menorTiempo = TPSSP[i];
+            k = i;
+            proximaSalida = PRIORIDAD;
+        }
     }
     for (i = 0; i < M; i++) {
         if (TPSM[i] < menorTiempo) {
             menorTiempo = TPSM[i];
-            *k = i;
+            k = i;
             proximaSalida = MEDICO;
         }
     }
@@ -284,4 +290,13 @@ long TAS() {
 double r() {
     // Random 0 < r() < 1
     return (double) rand() / RAND_MAX;
+}
+
+int prioritariosAtendidos(){
+    int i,a = 0;
+    for (i=0;i<N;i++){
+        if (TPSSP[i]!=HV)
+        a++;
+    }
+    return a;
 }
