@@ -2,17 +2,6 @@
 
 int main(int argc, char** argv) {
     printf("INICIANDO\n");
-
-    // INGRESO VAR. CONTROL
-    if (argc==3){
-        M=strtol(argv[1],NULL,10);
-        N=strtol(argv[2],NULL,10);
-    }
-    else {
-        N=1;
-        M=1;
-    }
-
     condicionesIniciales();
 
     // MODELO
@@ -170,7 +159,15 @@ void condicionesIniciales() {
     tf = 100000;
 
     // Var. Control
-    // [M,N] = argv
+    if (argc==3){
+        M=strtol(argv[1],NULL,10);
+        N=strtol(argv[2],NULL,10);
+    }
+    else {
+        N=1;
+        M=1;
+    }
+
 
     // Var. Estado
     ITOM = calloc(M, sizeof(int));
