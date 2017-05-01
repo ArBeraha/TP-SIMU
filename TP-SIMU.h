@@ -70,7 +70,7 @@ double  PECM,           // Promedio de Espera en Cola para el Médico
 
 int k;                  // Indice actual
 
-void condicionesIniciales();
+void condicionesIniciales(int argc, char** argv);
 void calcularResultados();
 void mostrarResultados();
 void llegada();

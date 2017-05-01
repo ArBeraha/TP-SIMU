@@ -2,7 +2,7 @@
 
 int main(int argc, char** argv) {
     printf("INICIANDO\n");
-    condicionesIniciales();
+    condicionesIniciales(argc,argv);
 
     // MODELO
     do {
@@ -152,7 +152,7 @@ void llegada() {
     }
 }
 
-void condicionesIniciales() {
+void condicionesIniciales(int argc, char** argv) {
     printf("Condiciones Iniciales\n");
     // Condiciones iniciales
     t = 0;
