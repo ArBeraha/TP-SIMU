@@ -11,7 +11,7 @@
 #include <unistd.h>
 
 //Constante
-#define HV LONG_MAX   // Definimos HV como el valor máximo de unsigned int
+#define HV LONG_MAX   // Definimos HV como el valor máximo de long
 #define MEDICO 0
 #define SECRETARIO 1
 #define PRIORIDAD 2

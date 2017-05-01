@@ -2,21 +2,33 @@
 
 int main(int argc, char** argv) {
     printf("INICIANDO\n");
+
+    // INGRESO VAR. CONTROL
+    if (argc==3){
+        M=strtol(argv[1],NULL,10);
+        N=strtol(argv[2],NULL,10);
+    }
+    else {
+        N=1;
+        M=1;
+    }
+
     condicionesIniciales();
+
     // MODELO
     do {
 
         //TABLA DE EVENTOS PARA DEBUG
         printf("TPLL=%ld\n", TPLL);
         printf("TPSM[0]=%ld,TPSS[0]=%ld,TPSSP[0]=%ld\n", TPSM[0], TPSS[0],
-                TPSSP[0]);
+            TPSSP[0]);
         printf("TPSM[1]=%ld,TPSS[1]=%ld,TPSSP[1]=%ld\n", TPSM[1], TPSS[1],
-                TPSSP[1]);
+            TPSSP[1]);
 
         int PS = proxima_salida();
 
         switch (PS) {
-        case MEDICO:
+            case MEDICO:
             printf("SALIDA MEDICO\n");
             t = TPSM[k];
             NSM--;
@@ -38,11 +50,10 @@ int main(int argc, char** argv) {
                     STOS[l] += t - ITOS[l];
                     long tas = TAS();
                     TPSSP[l] = t + tas;
-                    //STAS += tas;
                 }
             }
             break;
-        case SECRETARIO:
+            case SECRETARIO:
             printf("SALIDA SECRETARIO\n");
             t = TPSS[k];
             NSS--;
@@ -50,13 +61,13 @@ int main(int argc, char** argv) {
             SSS += t;
             NTS++;
             break;
-        case PRIORIDAD:
+            case PRIORIDAD:
             printf("SALIDA SECRETARIO PRIORITARIO\n");
             t = TPSSP[k];
             NSP--;
             salidaSecretario(k);
             break;
-        default:
+            default:
             llegada();
             break;
         }
@@ -67,7 +78,7 @@ int main(int argc, char** argv) {
         }
 
         printf("Fin ciclo con t=%ld, [NSM=%d, NSS=%d, NSP=%d]\n", t, NSM, NSS,
-                NSP);
+            NSP);
         //usleep(100); // Sleep para Debug
     } while ((t < tf) || (NSM + NSS + NSP > 0));
     calcularResultados();
@@ -108,6 +119,7 @@ void mostrarResultados() {
     for (i = 0; i < N; i++) {
         printf("\tPTOS[%d]=%f\n", i, PTOS[i]);
     }
+    printf("PTOM:\n");
     for (i = 0; i < M; i++) {
         printf("\tPTOM[%d]=%f\n", i, PTOM[i]);
     }
@@ -121,7 +133,7 @@ void llegada() {
     t = TPLL;
     TPLL = t + IA();
     switch (motivoConsulta()) {
-    case MEDICO:
+        case MEDICO:
         printf("LLEGADA MOTIVO MEDICO\n");
         k = medicoLibre();
         NSM++;
@@ -133,7 +145,7 @@ void llegada() {
             STAM += tam;
         }
         break;
-    case SECRETARIO:
+        case SECRETARIO:
         printf("LLEGADA MOTIVO SECRETARIO\n");
         k = secretarioLibre();
         int a = arrepentimiento();
@@ -158,8 +170,7 @@ void condicionesIniciales() {
     tf = 100000;
 
     // Var. Control
-    M = 4;
-    N = 2;
+    // [M,N] = argv
 
     // Var. Estado
     ITOM = calloc(M, sizeof(int));
@@ -199,28 +210,28 @@ bool arrepentimiento() {
     if (NSS > 5)
         if (r() < 0.3)
             return true;
-    return false;
-}
+        return false;
+    }
 
-int motivoConsulta() {
-    if (r() < 0.7)
-        return MEDICO;
-    else
-        return SECRETARIO;
-}
+    int motivoConsulta() {
+        if (r() < 0.7)
+            return MEDICO;
+        else
+            return SECRETARIO;
+    }
 
-void salidaSecretario(int k) {
-    TPSS[k] = HV;
-    TPSSP[k] = HV;
-    if (NSP + NSS < N) {
-        ITOS[k] = t;
+    void salidaSecretario(int k) {
+        TPSS[k] = HV;
+        TPSSP[k] = HV;
+        if (NSP + NSS < N) {
+            ITOS[k] = t;
 
-    } else {
-        long tas = TAS();
+        } else {
+            long tas = TAS();
         if (prioritariosAtendidos() < NSP) { // HAY ALGUIEN CON PRIORIDAD SIN ATENDER
             TPSSP[k] = t + tas;
             TPSS[k] = HV;
-            printf("ATENDIENDO UN PRIORITARIO QUE ESTABA EN COLA");
+            printf("ATENDIENDO UN PRIORITARIO QUE ESTABA EN COLA\n");
         } else {
             TPSS[k] = t + tas;
             TPSSP[k] = HV;
