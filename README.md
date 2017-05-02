@@ -15,7 +15,7 @@ El tiempo de atención depende de lo que se tenga que realizar el paciente, teni
 - Realiza recetas electrónicas en el momento.
 - Duplicado de recetas.
 
-El tiempo de atención del secretario puede variar entre 3 a 40 minutos y viene dado por la siguiente f.d.p: **f(x)=1/12.394 (1+0.38114((x-2.0125)/12.394))^(-1+1/0.38114) **
+El tiempo de atención del secretario puede variar entre 3 a 40 minutos y viene dado por la siguiente f.d.p: **f(x)=1/12.394 (1+0.38114((x-2.0125)/12.394))^(-1+1/0.38114)**
 
 
 Cuando un médico termina de atender el 30% de las personas pasan a una nueva cola esperando que los atienda un secretario para realizar algún trámite con el mismo. Esta cola tiene prioridad para el secretario. Cada vez que un secretario termina de atender una persona que solo venia a hacer un trámite, debe chequear que no tenga nadie en cola de las personas salientes de consultar con un médico.
