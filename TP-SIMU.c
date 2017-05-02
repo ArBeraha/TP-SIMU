@@ -118,7 +118,6 @@ void mostrarResultados() {
 }
 
 void llegada() {
-    int k;
     t = TPLL;
     TPLL = t + IA();
     switch (motivoConsulta()) {
@@ -156,7 +155,7 @@ void condicionesIniciales(int argc, char** argv) {
     printf("Condiciones Iniciales\n");
     // Condiciones iniciales
     t = 0;
-    tf = 100000;
+    tf = 30000;
 
     // Var. Control
     if (argc==3){
@@ -173,10 +172,10 @@ void condicionesIniciales(int argc, char** argv) {
     ITOM = calloc(M, sizeof(int));
     ITOS = calloc(N, sizeof(int));
 
-    ITOM = malloc(sizeof(int) * M);
-    ITOS = malloc(sizeof(int) * N);
-    STOM = malloc(sizeof(int) * M);
-    STOS = malloc(sizeof(int) * N);
+    ITOM = calloc(M, sizeof(int));
+    ITOS = calloc(N, sizeof(int));
+    STOM = calloc(M, sizeof(int));
+    STOS = calloc(N, sizeof(int));
 
     NSS = NSM = SS = SSM = SSS = SLLM = SLLS = NTM = NTS = STAS = STAM = 0;
 
@@ -222,16 +221,13 @@ bool arrepentimiento() {
         TPSSP[k] = HV;
         if (NSP + NSS < N) {
             ITOS[k] = t;
-
         } else {
             long tas = TAS();
         if (prioritariosAtendidos() < NSP) { // HAY ALGUIEN CON PRIORIDAD SIN ATENDER
             TPSSP[k] = t + tas;
-            TPSS[k] = HV;
             printf("ATENDIENDO UN PRIORITARIO QUE ESTABA EN COLA\n");
         } else {
             TPSS[k] = t + tas;
-            TPSSP[k] = HV;
             STAS += tas;
         }
 
@@ -291,7 +287,7 @@ long IA() {
 }
 
 long TAM() {
-    return 15 + r() * (30 - 15);
+    return 15 + r() * (30 - 15);   
 }
 
 long TAS() {
