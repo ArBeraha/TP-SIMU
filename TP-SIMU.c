@@ -6,15 +6,7 @@ int main(int argc, char** argv) {
 
     // MODELO
     do {
-
-        //TABLA DE EVENTOS PARA DEBUG
-        printf("TPLL=%ld\n", TPLL);
-        printf("TPSM[0]=%ld,TPSS[0]=%ld,TPSSP[0]=%ld\n", TPSM[0], TPSS[0],
-            TPSSP[0]);
-        printf("TPSM[1]=%ld,TPSS[1]=%ld,TPSSP[1]=%ld\n", TPSM[1], TPSS[1],
-            TPSSP[1]);
-
-        int PS = proxima_salida();
+        int PS = proxima_evento();
 
         switch (PS) {
             case MEDICO:
@@ -68,7 +60,6 @@ int main(int argc, char** argv) {
 
         printf("Fin ciclo con t=%ld, [NSM=%d, NSS=%d, NSP=%d]\n", t, NSM, NSS,
             NSP);
-        //usleep(100); // Sleep para Debug
     } while ((t < tf) || (NSM + NSS + NSP > 0));
     calcularResultados();
     mostrarResultados();
@@ -158,8 +149,8 @@ void condicionesIniciales(int argc, char** argv) {
         N=strtol(argv[2],NULL,10);
     }
     else {
-        N=1;
-        M=1;
+        N=2;
+        M=2;
     }
 
 
@@ -247,33 +238,33 @@ int medicoLibre() {
     }
 }
 
-int proxima_salida() {
+int proxima_evento() {
     int i;
     long menorTiempo = HV;
-    int proximaSalida;
+    int proximaEvento;
     for (i = 0; i < N; i++) {
         if (TPSS[i] < menorTiempo) {
             menorTiempo = TPSS[i];
             k = i;
-            proximaSalida = SECRETARIO;
+            proximaEvento = SECRETARIO;
         }
         if (TPSSP[i] < menorTiempo) {
             menorTiempo = TPSSP[i];
             k = i;
-            proximaSalida = PRIORIDAD;
+            proximaEvento = PRIORIDAD;
         }
     }
     for (i = 0; i < M; i++) {
         if (TPSM[i] < menorTiempo) {
             menorTiempo = TPSM[i];
             k = i;
-            proximaSalida = MEDICO;
+            proximaEvento = MEDICO;
         }
     }
     if (TPLL < menorTiempo)
-        return -1;
+        return LLEGADA;
     else
-        return proximaSalida;
+        return proximaEvento;
 }
 
 long IA() {
