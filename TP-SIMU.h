@@ -56,17 +56,14 @@ int     NSS,            // Cantidad de personas para el secretario
         SLLM,           // Sumatoria llegada médico
         SLLS,           // Sumatoria llegada secretario
         NTM,            // Total de personas atendidas por médicos
-        NTS,            // Total de personas atendidas por secretarios
-        SA5,
-        TOTAL;
+        NTS;            // Total de personas atendidas por secretarios
 
 // Var. Resultado
 double  PECM,           // Promedio de Espera en Cola para el Médico
         PECS,           // Promedio de Espera en Cola para el Secretario
         *PTOS,          // Porcentaje de tiempo ocioso secretario
-        *PTOM,          // Porcentaje de tiempo ocioso médico
-        PPS,            // Promedio de Permanencia en el sistema
-        PA5;            // Porcentaje de arrepentidos 5
+        *PTOM;          // Porcentaje de tiempo ocioso médico
+
 
 int k;                  // Indice actual
 

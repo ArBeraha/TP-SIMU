@@ -85,10 +85,6 @@ void calcularResultados() {
             PTOM[i] = (STOM[i] * 100) / t;
         }
     }
-    if (TOTAL != 0)
-        PA5 = (SA5 * 100) / TOTAL;
-    else
-        PA5 = 0;
     if (NTM != 0)
         PECM = (SSM - SLLM - STAM) / NTM;
     else
@@ -102,7 +98,7 @@ void calcularResultados() {
 
 void mostrarResultados() {
     int i;
-    printf("%sRESULTADOS%s\n", VERDE, NEGRO);
+    printf("%sRESULTADOS%s (M=%d, N=%d)\n", VERDE, NEGRO, M,N);
 
     printf("PTOS:\n");
     for (i = 0; i < N; i++) {
@@ -112,7 +108,6 @@ void mostrarResultados() {
     for (i = 0; i < M; i++) {
         printf("\tPTOM[%d]=%f\n", i, PTOM[i]);
     }
-    printf("PA5=%f\n", PA5);
     printf("PECM=%f\n", PECM);
     printf("PECS=%f\n", PECS);
 }
@@ -155,7 +150,7 @@ void condicionesIniciales(int argc, char** argv) {
     printf("Condiciones Iniciales\n");
     // Condiciones iniciales
     t = 0;
-    tf = 30000;
+    tf = 100000;
 
     // Var. Control
     if (argc==3){
@@ -180,7 +175,7 @@ void condicionesIniciales(int argc, char** argv) {
     NSS = NSM = SS = SSM = SSS = SLLM = SLLS = NTM = NTS = STAS = STAM = 0;
 
     // Var. Resultado
-    PECM = PECS = PPS = PA5 = 0;
+    PECM = PECS = 0;
 
     PTOS = calloc(N, sizeof(double));
     PTOM = calloc(M, sizeof(double));
@@ -210,7 +205,7 @@ bool arrepentimiento() {
     }
 
     int motivoConsulta() {
-        if (r() < 0.7)
+        if (r() < 0.3)
             return MEDICO;
         else
             return SECRETARIO;
@@ -283,7 +278,7 @@ int proxima_salida() {
 
 long IA() {
     double R = 0.07 + r() * (0.93 - 0.07);
-    return -3.8785 * log(-0.374763 * log(R));
+    return -5.81775 * log(-0.374763 * log(R));
 }
 
 long TAM() {
